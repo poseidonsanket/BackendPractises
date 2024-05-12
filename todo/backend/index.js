@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 const port = 3000;
-const cors = require("cors")
+const cors = require("cors");
 const { createTodo } = require("./types");
-const { updateTodo } = require("./types");
+const { updateTodoStatus, updateTodo, deleteTodo } = require("./types");
 const Todo = require("./db");
 
 app.use(express.json());
@@ -38,7 +38,7 @@ app.post("/todo", async (req, res) => {
 
 app.put("/completed", async (req, res) => {
   const updatePayload = req.body;
-  const parsePayload = updateTodo.safeParse(updatePayload);
+  const parsePayload = updateTodoStatus.safeParse(updatePayload);
   if (!parsePayload.success) {
     return res.status(403).json({
       msg: "Give Valid input",
@@ -53,6 +53,45 @@ app.put("/completed", async (req, res) => {
 
   res.json({
     msg: "Todo marked as completed",
+  });
+});
+
+app.put("/update", async (req, res) => {
+  const updatedPayload = req.body;
+  const parsePayload = updateTodo.safeParse(updatedPayload);
+  if (!parsePayload.success) {
+    return res.status(403).json({
+      msg: "Give Valid input",
+    });
+  }
+  await Todo.updateOne(
+    {
+      _id: updatedPayload.id,
+    },
+    {
+      title: updatedPayload.newTitle,
+      description: updatedPayload.newDescription,
+    }
+  );
+  res.json({
+    msg: "Todo updated",
+  });
+});
+
+app.delete("/delete", async (req, res) => {
+  const deletePayload = req.body;
+  const parsePayload = deleteTodo.safeParse(deletePayload);
+  if (!parsePayload.success) {
+    res.status(403).json({
+      msg: "Give Valid input",
+    });
+  }
+  await Todo.deleteOne({
+    _id: deletePayload.id,
+  });
+
+  res.json({
+    msg: "Todo Deleted",
   });
 });
 
