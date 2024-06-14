@@ -1,4 +1,5 @@
 import { Button } from "@repo/ui/button";
+import  SignUp from "@repo/ui/signup";
 import Image from "next/image";
 
 export default function Home() {
@@ -101,6 +102,7 @@ export default function Home() {
           />
           Go to nextjs.org →
         </a>
+        <SignUp/>
       </footer>
     </div>
   );
